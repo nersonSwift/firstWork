@@ -18,8 +18,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var lastCell = 0
     var idLastUser = 0
     
-    var fail = false
-    
+    var getPack = true
+    var getError = false
     
     let realm = try! Realm()
     var results: Results<SaveUsers>!
@@ -52,33 +52,39 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //MARK: - take Users from git hub
     func takeUsers(){
-        fail = false
+        
         let gitHubUsersURL = URL(string: "https://api.github.com/users?since=\(idLastUser)")!
         let session = URLSession.shared
         session.dataTask(with: gitHubUsersURL) { (data, response, error) in
             
             guard let data = data else {
-                self.fail = true
+                self.getError = true
                 return
             }
             guard let response = response else {
-                self.fail = true
+                self.getError = true
                 return
             }
             do{
                 if let packUsers = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions()) as? [Any]{
                     self.users.append(contentsOf: packUsers)
+                    self.getPack = true
+                    self.getError = false
                 }else{
+                    self.getError = true
                     print(response)
-                    self.fail = true
+                    
                 }
             }catch{
+                self.getError = true
                 print(error)
-                self.fail = true
+               
             }
         }.resume()
         
-        sleep(1)
+        while !getPack && !getError {
+            sleep(1)
+        }
         self.saveUsers()
     }
     
@@ -131,7 +137,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         call.accessoryType = .detailButton
        
-        if (indexPath.row >= users.count - 5) && !fail{
+        if (indexPath.row == users.count - 5) && getPack{
+            getPack = false
             takeUsers()
             myTable.reloadData()
         }
