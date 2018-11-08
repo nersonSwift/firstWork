@@ -13,4 +13,5 @@ class SaveUsers: Object {
     @objc dynamic var id = 0
     @objc dynamic var name = ""
     @objc dynamic var url = ""
+    
 }

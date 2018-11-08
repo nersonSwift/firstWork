@@ -21,12 +21,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var getPack = true
     var getError = false
     
-    let realm = try! Realm()
+    var realm = try! Realm()
     var results: Results<SaveUsers>!
+    var resulte: Results<test>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let realm = try! Realm()
         results = realm.objects(SaveUsers.self)
+        resulte = realm.objects(test.self)
         
         if results.count > 0{
             loadUsers()
@@ -80,11 +83,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 print(error)
                
             }
+            DispatchQueue.main.async {
+                self.myTable.reloadData()
+                print("Show image data")
+            }
         }.resume()
         
-        while !getPack && !getError {
-            sleep(1)
-        }
+        
         self.saveUsers()
     }
     
@@ -115,6 +120,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 realm.add([saveUser])
             }
         }
+        //let a = test()
+        //a.cla = ret()
+       
     }
     
     
@@ -140,7 +148,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         if (indexPath.row == users.count - 5) && getPack{
             getPack = false
             takeUsers()
-            myTable.reloadData()
+            //myTable.reloadData()
         }
         return call
     }
@@ -149,7 +157,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         if let nextViewController = Detale.storyboardInstance() {
             nextViewController.modalPresentationStyle = .custom
-            nextViewController.user = users[indexPath.row] as! [String: Any]
+            nextViewController.user = users[indexPath.row] as? [String : Any]
             
             self.present(nextViewController, animated: true, completion: nil)
         }
