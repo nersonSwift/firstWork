@@ -154,6 +154,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     //MARK: - UITableViewDataDelegat
     
+    
+    
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         if let nextViewController = Detale.storyboardInstance() {
             nextViewController.modalPresentationStyle = .custom
